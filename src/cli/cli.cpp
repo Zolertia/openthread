@@ -849,7 +849,7 @@ void Interpreter::ProcessIfconfig(int argc, char *argv[])
 
     if (argc == 0)
     {
-        if (otIsInterfaceUp(mInstance))
+        if (otIp6IsEnabled(mInstance))
         {
             sServer->OutputFormat("up\r\n");
         }
@@ -860,11 +860,11 @@ void Interpreter::ProcessIfconfig(int argc, char *argv[])
     }
     else if (strcmp(argv[0], "up") == 0)
     {
-        SuccessOrExit(error = otInterfaceUp(mInstance));
+        SuccessOrExit(error = otIp6SetEnabled(mInstance, true));
     }
     else if (strcmp(argv[0], "down") == 0)
     {
-        SuccessOrExit(error = otInterfaceDown(mInstance));
+        SuccessOrExit(error = otIp6SetEnabled(mInstance, false));
     }
 
 exit:
@@ -882,7 +882,7 @@ ThreadError Interpreter::ProcessIpAddrAdd(int argc, char *argv[])
     aAddress.mPrefixLength = 64;
     aAddress.mPreferred = true;
     aAddress.mValid = true;
-    error = otAddUnicastAddress(mInstance, &aAddress);
+    error = otIp6AddUnicastAddress(mInstance, &aAddress);
 
 exit:
     return error;
@@ -896,7 +896,7 @@ ThreadError Interpreter::ProcessIpAddrDel(int argc, char *argv[])
     VerifyOrExit(argc > 0, error = kThreadError_Parse);
 
     SuccessOrExit(error = otIp6AddressFromString(argv[0], &address));
-    error = otRemoveUnicastAddress(mInstance, &address);
+    error = otIp6RemoveUnicastAddress(mInstance, &address);
 
 exit:
     return error;
@@ -908,7 +908,7 @@ void Interpreter::ProcessIpAddr(int argc, char *argv[])
 
     if (argc == 0)
     {
-        otNetifAddressPtr unicastAddrs(otGetUnicastAddresses(mInstance));
+        otNetifAddressPtr unicastAddrs(otIp6GetUnicastAddresses(mInstance));
 
         for (const otNetifAddress *addr = unicastAddrs; addr; addr = addr->mNext)
         {
@@ -948,7 +948,7 @@ ThreadError Interpreter::ProcessIpMulticastAddrAdd(int argc, char *argv[])
     VerifyOrExit(argc > 0, error = kThreadError_Parse);
 
     SuccessOrExit(error = otIp6AddressFromString(argv[0], &address));
-    error = otSubscribeMulticastAddress(mInstance, &address);
+    error = otIp6SubscribeMulticastAddress(mInstance, &address);
 
 exit:
     return error;
@@ -962,7 +962,7 @@ ThreadError Interpreter::ProcessIpMulticastAddrDel(int argc, char *argv[])
     VerifyOrExit(argc > 0, error = kThreadError_Parse);
 
     SuccessOrExit(error = otIp6AddressFromString(argv[0], &address));
-    error = otUnsubscribeMulticastAddress(mInstance, &address);
+    error = otIp6UnsubscribeMulticastAddress(mInstance, &address);
 
 exit:
     return error;
@@ -974,7 +974,7 @@ ThreadError Interpreter::ProcessMulticastPromiscuous(int argc, char *argv[])
 
     if (argc == 0)
     {
-        if (otIsMulticastPromiscuousModeEnabled(mInstance))
+        if (otIp6IsMulticastPromiscuousEnabled(mInstance))
         {
             sServer->OutputFormat("Enabled\r\n");
         }
@@ -987,11 +987,11 @@ ThreadError Interpreter::ProcessMulticastPromiscuous(int argc, char *argv[])
     {
         if (strcmp(argv[0], "enable") == 0)
         {
-            otEnableMulticastPromiscuousMode(mInstance);
+            otIp6SetMulticastPromiscuousEnabled(mInstance, true);
         }
         else if (strcmp(argv[0], "disable") == 0)
         {
-            otDisableMulticastPromiscuousMode(mInstance);
+            otIp6SetMulticastPromiscuousEnabled(mInstance, false);
         }
         else
         {
@@ -1009,7 +1009,7 @@ void Interpreter::ProcessIpMulticastAddr(int argc, char *argv[])
 
     if (argc == 0)
     {
-        for (const otNetifMulticastAddress *addr = otGetMulticastAddresses(mInstance); addr; addr = addr->mNext)
+        for (const otNetifMulticastAddress *addr = otIp6GetMulticastAddresses(mInstance); addr; addr = addr->mNext)
         {
             sServer->OutputFormat("%x:%x:%x:%x:%x:%x:%x:%x\r\n",
                                   HostSwap16(addr->mAddress.mFields.m16[0]),
@@ -1452,7 +1452,7 @@ void Interpreter::HandlePingTimer()
     otMessage message;
     const otMessageInfo *messageInfo = static_cast<const otMessageInfo *>(&sMessageInfo);
 
-    VerifyOrExit((message = otNewIp6Message(mInstance, true)) != NULL, error = kThreadError_NoBufs);
+    VerifyOrExit((message = otIp6NewMessage(mInstance, true)) != NULL, error = kThreadError_NoBufs);
     SuccessOrExit(error = otMessageAppend(message, &timestamp, sizeof(timestamp)));
     SuccessOrExit(error = otMessageSetLength(message, sLength));
     SuccessOrExit(error = otIcmp6SendEchoRequest(mInstance, message, messageInfo, 1));
@@ -2929,8 +2929,8 @@ void Interpreter::HandleNetifStateChanged(uint32_t aFlags)
     VerifyOrExit((aFlags & OT_THREAD_NETDATA_UPDATED) != 0, ;);
 
 #ifndef OTDLL
-    otSlaacUpdate(mInstance, mSlaacAddresses, sizeof(mSlaacAddresses) / sizeof(mSlaacAddresses[0]), otCreateRandomIid,
-                  NULL);
+    otIp6SlaacUpdate(mInstance, mSlaacAddresses, sizeof(mSlaacAddresses) / sizeof(mSlaacAddresses[0]),
+                     otIp6CreateRandomIid, NULL);
 #if OPENTHREAD_ENABLE_DHCP6_SERVER
     otDhcp6ServerUpdate(mInstance);
 #endif  // OPENTHREAD_ENABLE_DHCP6_SERVER
