@@ -1261,7 +1261,7 @@ exit:
 void Interpreter::ProcessNetworkDataRegister(int argc, char *argv[])
 {
     ThreadError error = kThreadError_None;
-    SuccessOrExit(error = otSendServerData(mInstance));
+    SuccessOrExit(error = otNetDataRegister(mInstance));
 
 exit:
     (void)argc;
@@ -1682,7 +1682,7 @@ ThreadError Interpreter::ProcessPrefixAdd(int argc, char *argv[])
         }
     }
 
-    error = otAddBorderRouter(mInstance, &config);
+    error = otNetDataAddPrefixInfo(mInstance, &config);
 
 exit:
     return error;
@@ -1715,7 +1715,7 @@ ThreadError Interpreter::ProcessPrefixRemove(int argc, char *argv[])
         ExitNow(error = kThreadError_Parse);
     }
 
-    error = otRemoveBorderRouter(mInstance, &prefix);
+    error = otNetDataRemovePrefixInfo(mInstance, &prefix);
 
 exit:
     (void)argc;
@@ -1727,7 +1727,7 @@ ThreadError Interpreter::ProcessPrefixList(void)
     otNetworkDataIterator iterator = OT_NETWORK_DATA_ITERATOR_INIT;
     otBorderRouterConfig config;
 
-    while (otGetNextOnMeshPrefix(mInstance, true, &iterator, &config) == kThreadError_None)
+    while (otNetDataGetNextPrefixInfo(mInstance, true, &iterator, &config) == kThreadError_None)
     {
         sServer->OutputFormat("%x:%x:%x:%x::/%d ",
                               HostSwap16(config.mPrefix.mPrefix.mFields.m16[0]),
@@ -1899,7 +1899,7 @@ ThreadError Interpreter::ProcessRouteAdd(int argc, char *argv[])
         }
     }
 
-    error = otAddExternalRoute(mInstance, &config);
+    error = otNetDataAddRoute(mInstance, &config);
 
 exit:
     return error;
@@ -1933,7 +1933,7 @@ ThreadError Interpreter::ProcessRouteRemove(int argc, char *argv[])
         ExitNow(error = kThreadError_Parse);
     }
 
-    error = otRemoveExternalRoute(mInstance, &prefix);
+    error = otNetDataRemoveRoute(mInstance, &prefix);
 
 exit:
     return error;
