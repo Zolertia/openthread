@@ -73,6 +73,7 @@ namespace Cli {
 const struct Command Interpreter::sCommands[] =
 {
     { "help", &Interpreter::ProcessHelp },
+    { "autostart", &Interpreter::ProcessAutoStart },
     { "adc", &Interpreter::ProcessAdc },
     { "relay", &Interpreter::ProcessRelay },
     { "blacklist", &Interpreter::ProcessBlacklist },
@@ -255,6 +256,37 @@ void Interpreter::ProcessHelp(int argc, char *argv[])
 
     (void)argc;
     (void)argv;
+}
+
+void Interpreter::ProcessAutoStart(int argc, char *argv[])
+{
+    ThreadError error = kThreadError_None;
+
+    if (argc == 0)
+    {
+        if (otThreadGetAutoStart(mInstance))
+        {
+            sServer->OutputFormat("true\r\n");
+        }
+        else
+        {
+            sServer->OutputFormat("false\r\n");
+        }
+    }
+    else if (strcmp(argv[0], "true") == 0)
+    {
+        error = otThreadSetAutoStart(mInstance, true);
+    }
+    else if (strcmp(argv[0], "false") == 0)
+    {
+        error = otThreadSetAutoStart(mInstance, false);
+    }
+    else
+    {
+        error = kThreadError_InvalidArgs;
+    }
+
+    AppendResult(error);
 }
 
 void Interpreter::ProcessBlacklist(int argc, char *argv[])
