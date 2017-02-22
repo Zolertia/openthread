@@ -32,7 +32,6 @@
  *   This file includes the platform-specific initializers.
  */
 
-#include <platform/uart.h>
 #include "platform-cc2538.h"
 
 otInstance *sInstance;
@@ -59,7 +58,6 @@ void PlatformInit(int argc, char *argv[])
     cc2538AlarmInit();
     cc2538RandomInit();
     cc2538RadioInit();
-    otPlatUartEnable();
 
     PlatformLedsInit();
 
