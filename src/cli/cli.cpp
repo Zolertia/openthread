@@ -1349,7 +1349,7 @@ exit:
 }
 
 #ifndef OTDLL
-void Interpreter::s_HandleIcmpReceive(void *aContext, otMessage aMessage, const otMessageInfo *aMessageInfo,
+void Interpreter::s_HandleIcmpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo,
                                       const otIcmp6Header *aIcmpHeader)
 {
     static_cast<Interpreter *>(aContext)->HandleIcmpReceive(*static_cast<Message *>(aMessage),
@@ -1449,7 +1449,7 @@ void Interpreter::HandlePingTimer()
     ThreadError error = kThreadError_None;
     uint32_t timestamp = HostSwap32(Timer::GetNow());
 
-    otMessage message;
+    otMessage *message;
     const otMessageInfo *messageInfo = static_cast<const otMessageInfo *>(&sMessageInfo);
 
     VerifyOrExit((message = otIp6NewMessage(mInstance, true)) != NULL, error = kThreadError_NoBufs);
@@ -2984,7 +2984,7 @@ exit:
 }
 
 #ifndef OTDLL
-void Interpreter::s_HandleDiagnosticGetResponse(otMessage aMessage, const otMessageInfo *aMessageInfo,
+void Interpreter::s_HandleDiagnosticGetResponse(otMessage *aMessage, const otMessageInfo *aMessageInfo,
                                                 void *aContext)
 {
     static_cast<Interpreter *>(aContext)->HandleDiagnosticGetResponse(*static_cast<Message *>(aMessage),
