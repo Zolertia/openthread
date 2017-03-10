@@ -26,28 +26,21 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+ 
+/**
+ * @file
+ *   This file implements a basic Grove analog moisture sensor
+ *
+ */
+#include <stdint.h>
 
-#ifndef RELAY_H_
-#define RELAY_H_
+#include "moisture.h"
+#include "../adc.h"
 
-#include "../gpio.h"
-
-#ifdef __cplusplus
- extern "C"{
-#endif
-
-
-#define RELAY_PIN        5
-#define RELAY_PORT       GPIO_A_NUM
-
-#define RELAY_OUTPUT    cc2538GpioDirOutput(RELAY_PORT, RELAY_PIN)
-#define RELAY_ON        cc2538GpioSetPin(RELAY_PORT, RELAY_PIN)
-#define RELAY_OFF       cc2538GpioClearPin(RELAY_PORT, RELAY_PIN)
-
-#define RELAY_ENABLE    RELAY_OUTPUT; \
-                        RELAY_OFF
-
-#ifdef __cplusplus
-} // end extern "C"
-#endif
-#endif
+uint16_t moistureReadValue(void)
+{
+	uint16_t res;
+	res = cc2538AdcReadChannel(MOISTURE_PIN);
+	if (res >= 34000) return 0; 
+	else return res;
+}
