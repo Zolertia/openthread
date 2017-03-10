@@ -47,6 +47,7 @@ libopenthread_cc2538_a_SOURCES            = \
     radio.c                                 \
     random.c                                \
     firefly/tsl2x6x.c                       \
+    firefly/moisture.c                      \
     startup-gcc.c                           \
     uart.c                                  \
     $(NULL)
@@ -61,11 +62,13 @@ noinst_HEADERS                            = \
     adc.h                                   \
     cc2538-reg.h                            \
     firefly/leds.h                          \
+    firefly/relay.h                         \
     gpio.h                                  \
     i2c.h                                   \
     platform-cc2538.h                       \
     rom-utility.h                           \
     firefly/tsl2x6x.h                       \
+    firefly/moisture.h                      \
     $(NULL)
 
 Dash                                      = -

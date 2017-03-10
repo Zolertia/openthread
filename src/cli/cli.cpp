@@ -70,10 +70,10 @@
 #include "../../examples/platforms/cc2538/firefly/leds.h"
 #include "../../examples/platforms/cc2538/firefly/tsl2x6x.h"
 #include "../../examples/platforms/cc2538/firefly/relay.h"
+#include "../../examples/platforms/cc2538/firefly/moisture.h"
 #include "../../examples/platforms/cc2538/firefly/dht22.h"
 #include "../../examples/platforms/cc2538/adc.h"
 #include "../../examples/platforms/cc2538/i2c.h"
-
 
 using Thread::Encoding::BigEndian::HostSwap16;
 using Thread::Encoding::BigEndian::HostSwap32;
@@ -89,6 +89,7 @@ const struct Command Interpreter::sCommands[] =
     { "adc", &Interpreter::ProcessAdc },
     { "relay", &Interpreter::ProcessRelay },
     { "dht22", &Interpreter::ProcessDht22 },
+    { "moisture", &Interpreter::ProcessMoisture },
     { "blacklist", &Interpreter::ProcessBlacklist },
     { "bufferinfo", &Interpreter::ProcessBufferInfo },
     { "channel", &Interpreter::ProcessChannel },
@@ -2339,6 +2340,31 @@ void Interpreter::ProcessLeds(int argc, char *argv[])
     else
     {
         error = kThreadError_Parse;
+    }
+
+exit:
+    (void)argc;
+    (void)argv;
+    AppendResult(error);
+}
+
+void Interpreter::ProcessMoisture(int argc, char *argv[])
+{
+    ThreadError error = kThreadError_None;
+
+    VerifyOrExit(argc > 0, error = kThreadError_Parse);
+
+    if (strcmp(argv[0], "enable") == 0)
+    {
+        MOISTURE_ENABLE;
+    }
+    else if (strcmp(argv[0], "value") == 0)
+    {
+        sServer->OutputFormat("moisture: %d\r\n", moistureReadValue());
+    }
+    else
+    {
+        ExitNow(error = kThreadError_Parse);
     }
 
 exit:

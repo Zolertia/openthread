@@ -27,27 +27,23 @@
  * SUCH DAMAGE.
  */
 
-#ifndef RELAY_H_
-#define RELAY_H_
+#ifndef MOISTURE_H
+#define MOISTURE_H
 
-#include "../gpio.h"
+#include <stdint.h>
+#include "../adc.h"
 
-#ifdef __cplusplus
- extern "C"{
+ #ifdef __cplusplus
+ extern "C" {
 #endif
 
+// ADC specific values
+#define MOISTURE_PIN    5
+#define MOISTURE_ENABLE cc2538AdcPinInit(MOISTURE_PIN)
 
-#define RELAY_PIN        5
-#define RELAY_PORT       GPIO_A_NUM
-
-#define RELAY_OUTPUT    cc2538GpioDirOutput(RELAY_PORT, RELAY_PIN)
-#define RELAY_ON        cc2538GpioSetPin(RELAY_PORT, RELAY_PIN)
-#define RELAY_OFF       cc2538GpioClearPin(RELAY_PORT, RELAY_PIN)
-
-#define RELAY_ENABLE    RELAY_OUTPUT; \
-                        RELAY_OFF
+uint16_t moistureReadValue(void);
 
 #ifdef __cplusplus
 } // end extern "C"
 #endif
-#endif
+#endif // MOISTURE_H
