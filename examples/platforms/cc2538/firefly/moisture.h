@@ -41,7 +41,7 @@
 #define MOISTURE_PIN    5
 #define MOISTURE_ENABLE cc2538AdcPinInit(MOISTURE_PIN)
 
-uint16_t moistureReadValue(void);
+unsigned int moistureReadValue(void);
 
 #ifdef __cplusplus
 } // end extern "C"

@@ -47,6 +47,7 @@ libopenthread_cc2538_a_SOURCES            = \
     radio.c                                 \
     random.c                                \
     firefly/tsl2x6x.c                       \
+    firefly/dht22.c                         \
     firefly/moisture.c                      \
     startup-gcc.c                           \
     uart.c                                  \
@@ -68,6 +69,7 @@ noinst_HEADERS                            = \
     platform-cc2538.h                       \
     rom-utility.h                           \
     firefly/tsl2x6x.h                       \
+    firefly/dht22.h                         \
     firefly/moisture.h                      \
     $(NULL)
 

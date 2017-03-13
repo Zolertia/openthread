@@ -2415,8 +2415,8 @@ void Interpreter::ProcessDht22(int argc, char *argv[])
     }
     else if (strcmp(argv[0], "readall") == 0) {
       dht22_read_all((int*)&temp, (int*)&humidity);
-      sServer->OutputFormat("Temp: %02d,%02d\r\n", temp / 10, temp % 10);
-      sServer->OutputFormat("Humidity: %02d,%02d\r\n", humidity / 10, humidity % 10);
+      sServer->OutputFormat("Temp: %02d,%d\r\n", temp / 10, temp % 10);
+      sServer->OutputFormat("Humidity: %02d,%d\r\n", humidity / 10, humidity % 10);
     }
     else if (strcmp(argv[0], "temp") == 0)
     {

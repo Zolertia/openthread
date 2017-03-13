@@ -37,9 +37,9 @@
 #include "moisture.h"
 #include "../adc.h"
 
-uint16_t moistureReadValue(void)
+unsigned int moistureReadValue(void)
 {
-	uint16_t res;
+	unsigned int res;
 	res = cc2538AdcReadChannel(MOISTURE_PIN);
 	if (res >= 34000) return 0; 
 	else return res;
