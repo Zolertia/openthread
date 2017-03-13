@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Zolertia - http://www.zolertia.com
+ * Copyright (c) 2017, Zolertia - http://www.zolertia.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,29 +25,58 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * This file is part of the Contiki operating system.
+ *
  */
+#ifndef DHT22_H_
+#define DHT22_H_
 
-#ifndef RELAY_H_
-#define RELAY_H_
-
-#include "../gpio.h"
+#include <stdint.h>
 
 #ifdef __cplusplus
- extern "C"{
+ extern "C" {
 #endif
 
+// DHT22 default pin and port
+#ifdef DHT22_CONF_PIN
+#define DHT22_PIN        DHT22_CONF_PIN
+#else
+#define DHT22_PIN        5
+#endif
+#ifdef DHT22_CONF_PORT
+#define DHT22_PORT       DHT22_CONF_PORT
+#else
+#define DHT22_PORT       GPIO_A_NUM
+#endif
 
-#define RELAY_PIN        5
-#define RELAY_PORT       GPIO_A_NUM
+// DHT22 available commands
+#define DHT22_READ_TEMP         0x01
+#define DHT22_READ_HUM          0x02
+#define DHT22_READ_ALL          0x03
 
-#define RELAY_OUTPUT	   cc2538GpioDirOutput(RELAY_PORT, RELAY_PIN)
-#define RELAY_ON        cc2538GpioSetPin(RELAY_PORT, RELAY_PIN)
-#define RELAY_OFF       cc2538GpioClearPin(RELAY_PORT, RELAY_PIN)
+// DHT22 return types
+#define DHT22_ERROR             (-1)
+#define DHT22_SUCCESS           0x00
+#define DHT22_BUSY              0xFF
 
-#define RELAY_ENABLE    RELAY_OUTPUT; \
- 						RELAY_OFF
+// DHT22 constants
+#define DHT22_BUFFER            5    /**< Buffer to store the samples         */
+#define DHT22_COUNT             8    /**< Minimum ticks to detect a "1" bit   */
+#define DHT22_MAX_TIMMING       85   /**< Maximum ticks in a single operation */
+#define DHT22_READING_DELAY     12L                     /**< 1 us   */
+#define DHT22_READY_TIME        20L       /**< 40 us  */
+#define DHT22_START_TIME        90400L    /**< 20 ms  */
+#define DHT22_AWAKE_TIME        3800L   /**< 250 ms */
+// DHT22 auxiliary functions
+int dht22_read_all(int *temperature, int *humidity);
+int dht22_enable(void);
+
+//extern const struct int dht22;
 
 #ifdef __cplusplus
 } // end extern "C"
 #endif
-#endif
+#endif /* DHT22_H_ */
+
+

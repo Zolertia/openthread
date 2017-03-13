@@ -70,8 +70,10 @@
 #include "../../examples/platforms/cc2538/firefly/leds.h"
 #include "../../examples/platforms/cc2538/firefly/tsl2x6x.h"
 #include "../../examples/platforms/cc2538/firefly/relay.h"
+#include "../../examples/platforms/cc2538/firefly/dht22.h"
 #include "../../examples/platforms/cc2538/adc.h"
 #include "../../examples/platforms/cc2538/i2c.h"
+
 
 using Thread::Encoding::BigEndian::HostSwap16;
 using Thread::Encoding::BigEndian::HostSwap32;
@@ -86,6 +88,7 @@ const struct Command Interpreter::sCommands[] =
     { "autostart", &Interpreter::ProcessAutoStart },
     { "adc", &Interpreter::ProcessAdc },
     { "relay", &Interpreter::ProcessRelay },
+    { "dht22", &Interpreter::ProcessDht22 },
     { "blacklist", &Interpreter::ProcessBlacklist },
     { "bufferinfo", &Interpreter::ProcessBufferInfo },
     { "channel", &Interpreter::ProcessChannel },
@@ -2367,6 +2370,45 @@ void Interpreter::ProcessRelay(int argc, char *argv[])
         ExitNow(error = kThreadError_Parse);
     }
     
+exit:
+    (void)argc;
+    (void)argv;
+    AppendResult(error);
+}
+
+void Interpreter::ProcessDht22(int argc, char *argv[])
+{
+    int temp, humidity;
+    ThreadError error = kThreadError_None;
+
+    VerifyOrExit(argc > 0, error = kThreadError_Parse);
+
+    if (strcmp(argv[0], "enable") == 0)
+    {
+      dht22_enable();
+    }
+    else if (strcmp(argv[0], "readall") == 0) {
+      dht22_read_all((int*)&temp, (int*)&humidity);
+      sServer->OutputFormat("Temp: %02d,%02d\r\n", temp / 10, temp % 10);
+      sServer->OutputFormat("Humidity: %02d,%02d\r\n", humidity / 10, humidity % 10);
+    }
+    else if (strcmp(argv[0], "temp") == 0)
+    {
+        //Place here the function to retrieve the temp
+      dht22_read_all(&temp,&humidity);                                    
+      sServer->OutputFormat("%d\r\n", (const int *)temp);
+    }                                                             
+    else if (strcmp(argv[0], "humidity") == 0)
+    {
+        //Place here the function to retrieve the humidity
+      dht22_read_all(&temp,&humidity);
+      sServer->OutputFormat("%d\r\n", (const int *)humidity);
+    }
+    else
+    {
+      ExitNow(error = kThreadError_Parse);
+    }
+
 exit:
     (void)argc;
     (void)argv;
